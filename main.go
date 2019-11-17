@@ -14,6 +14,11 @@ type Player struct {
 	Position string `json:"position"`
 }
 
+type Error struct {
+	Field       string `json:"field"`
+	Description string `json:"description"`
+}
+
 var players []Player
 
 func getPlayers(w http.ResponseWriter, r *http.Request) {
@@ -21,7 +26,11 @@ func getPlayers(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 
-	json.NewEncoder(w).Encode(players)
+	if len(players) > 0 {
+		json.NewEncoder(w).Encode(players)
+	} else {
+		w.Write([]byte("[]"))
+	}
 }
 
 func getPlayer(w http.ResponseWriter, r *http.Request) {
@@ -68,6 +77,19 @@ func createPlayer(w http.ResponseWriter, r *http.Request) {
 
 	var player Player
 	_ = json.NewDecoder(r.Body).Decode(&player)
+
+	if len(player.Name) == 0 {
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(Error{Field: "name", Description: "invalid name"})
+		return
+	}
+
+	if len(player.Position) == 0 {
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(Error{Field: "position", Description: "invalid position"})
+		return
+	}
+
 	player.ID = uuid.New().String()
 
 	players = append(players, player)
