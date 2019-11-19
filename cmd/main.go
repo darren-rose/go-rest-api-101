@@ -2,24 +2,14 @@ package main
 
 import (
 	"encoding/json"
+	"github.com/darren-rose/go-rest-api-101/internal"
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
 	"log"
 	"net/http"
 )
 
-type Player struct {
-	ID       string `json:"id"`
-	Name     string `json:"name"`
-	Position string `json:"position"`
-}
-
-type Error struct {
-	Field       string `json:"field"`
-	Description string `json:"description"`
-}
-
-var players []Player
+var players []models.Player
 
 func getPlayers(w http.ResponseWriter, r *http.Request) {
 	log.Printf("%s", r.Method)
@@ -75,18 +65,18 @@ func createPlayer(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 
-	var player Player
+	var player models.Player
 	_ = json.NewDecoder(r.Body).Decode(&player)
 
 	if len(player.Name) == 0 {
 		w.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(w).Encode(Error{Field: "name", Description: "invalid name"})
+		json.NewEncoder(w).Encode(models.Error{Field: "name", Description: "invalid name"})
 		return
 	}
 
 	if len(player.Position) == 0 {
 		w.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(w).Encode(Error{Field: "position", Description: "invalid position"})
+		json.NewEncoder(w).Encode(models.Error{Field: "position", Description: "invalid position"})
 		return
 	}
 

@@ -1,4 +1,4 @@
-module rest-api-101
+module github.com/darren-rose/go-rest-api-101
 
 go 1.12
 
