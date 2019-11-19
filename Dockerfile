@@ -4,9 +4,9 @@ LABEL maintainer="Darren Rose <darrenwrose@gmail.com>"
 
 WORKDIR /app
 
-COPY go.mod go.sum main.go ./
+COPY . /app
 
-RUN go build -o app .
+RUN go build -o app cmd/main.go
 
 CMD ["./app"]
 

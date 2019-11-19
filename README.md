@@ -3,7 +3,7 @@
 ### build
 
 ```
-go build -o player main.go
+go build -o player cmd/main.go
 ```
 
 ### run
